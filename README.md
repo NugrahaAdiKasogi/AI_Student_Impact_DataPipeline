@@ -93,7 +93,7 @@ The dataset is transformed into a Star Schema model consisting of:
 
 Recommended folder structure:
 
-
+```text
 project/
 │
 ├── images/
@@ -106,7 +106,7 @@ project/
 ├── .gitignore
 ├── requirements.txt
 └── README.md
-
+```
 
 ---
 
