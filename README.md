@@ -1,8 +1,5 @@
 # AI Student Impact Data Pipeline
 
-````md id="x7n2ka"
-# AI Student Impact Data Pipeline
-
 ETL (Extract, Transform, Load) pipeline project using Python, Pandas, PostgreSQL, and Supabase to process and analyze the impact of Generative AI usage on student academic performance.
 
 ---
@@ -90,13 +87,13 @@ The dataset is transformed into a Star Schema model consisting of:
 ---
 
 # ERD (Entity Relationship Diagram)
-```md
+
 ![ERD](images/ai_student_impact_erd.drawio.png)
-```
+
 
 Recommended folder structure:
 
-```text
+
 project/
 │
 ├── images/
@@ -109,7 +106,7 @@ project/
 ├── .gitignore
 ├── requirements.txt
 └── README.md
-```
+
 
 ---
 
