@@ -88,7 +88,7 @@ The dataset is transformed into a Star Schema model consisting of:
 
 # ERD (Entity Relationship Diagram)
 
-![ERD](images/ai_student_impact_erd.drawio.png)
+![ERD](ai_student_impact_erd.drawio.png)
 
 
 Recommended folder structure:
