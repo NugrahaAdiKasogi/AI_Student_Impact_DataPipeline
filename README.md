@@ -1,40 +1,246 @@
-# End-to-End Data Engineering Pipeline: Student AI Impact & Global Education Analytics
+# AI Student Impact Data Pipeline
 
-Proyek ini membangun pipa data (ETL Pipeline) otomatis secara *end-to-end* untuk mengolah dua dataset sektor pendidikan: dampak GenAI pada mahasiswa (50.000 baris) dan metrik edukasi global. Data diekstraksi dari sumber mentah, ditransformasikan ke dalam model skema bintang (*Star Schema*), dan dimuat ke dalam *Cloud Data Warehouse* PostgreSQL via Supabase.
+````md id="x7n2ka"
+# AI Student Impact Data Pipeline
 
-## 🛠️ Tech Stack
-- **Language:** Python 3.x
-- **Data Manipulation:** Pandas, Jupyter Notebook
-- **Database Connector:** SQLAlchemy, Psycopg2-binary
-- **Data Warehouse:** PostgreSQL (Supabase Cloud Infrastructure)
-- **Security & Ops:** Python-dotenv (Environment Variables), Connection Pooler (Session Mode)
+ETL (Extract, Transform, Load) pipeline project using Python, Pandas, PostgreSQL, and Supabase to process and analyze the impact of Generative AI usage on student academic performance.
 
-## 📐 Arsitektur Data (Dimensional Modeling)
+---
 
-Untuk mengoptimalkan performa kueri analitik, tabel melebar (*wide table*) dari sumber mentah dipecah menjadi beberapa **Tabel Dimensi** (Konteks) dan **Tabel Fakta** (Metrik Numerik).
+# Project Overview
 
-### 1. Dataset Impact AI Siswa (Star Schema)
-- **`dim_student`**: `Student_ID` (PK), `Major_Category`, `Year_of_Study`
-- **`dim_ai_profile`**: `ai_profile_id` (PK), `Primary_Use_Case`, `Prompt_Engineering_Skill`, `Paid_Subscription`
-- **`dim_policy`**: `policy_id` (PK), `Institutional_Policy`
-- **`dim_risk`**: `risk_id` (PK), `Burnout_Risk_Level`
-- **`fact_student_ai_impact`**: `fact_id` (PK), Foreign Keys (`student_id`, `ai_profile_id`, `policy_id`, `risk_id`), dan 8 metrik numerik (IPK, Jam Belajar, Tingkat Stres, dll).
+This project demonstrates a simple Data Engineering workflow by transforming raw student AI usage data into a dimensional data warehouse schema and loading it into Supabase PostgreSQL.
 
-### 2. Dataset Global Education Metrics
-- **`dim_country`**: `country_id` (PK), `Countries_and_areas`, `Latitude`, `Longitude`
-- **`fact_global_education_metrics`**: `fact_id` (PK), `country_id` (FK), serta 20+ metrik kuantitatif (OOSR, Completion Rate, Unemployment Rate, Birth Rate).
+The project includes:
+- Data Cleaning
+- Data Transformation
+- Star Schema Modeling
+- ETL Pipeline using Python
+- PostgreSQL Data Warehouse Deployment
+- Cloud Database Integration using Supabase
 
-## 🚀 Fitur Utama & Penyelesaian Masalah (Engineering Highlights)
-- **IPv4 Connection Workaround:** Mengatasi limitasi jaringan lokal dengan mengimplementasikan **Supabase Connection Pooler** (port 5432) berbasis IPv6-to-IPv4 proxy agar transaksi data ke *cloud* tetap stabil tanpa *timeout*.
-- **Data Integrity & Constraints:** Menangani urutan eksekusi *Load* secara ketat—memasukkan tabel dimensi terlebih dahulu sebelum tabel fakta untuk mencegah kegagalan *Foreign Key Constraint Violation*.
-- **Security Best Practices:** Mengisolasi kredensial database sensitif menggunakan variabel lingkungan (`.env`) agar terhindar dari kebocoran data di repositori publik.
+---
 
-## 📁 Struktur Direktori
+# Tech Stack
+
+- Python
+- Pandas
+- SQLAlchemy
+- PostgreSQL
+- Supabase
+- Jupyter Notebook
+
+---
+
+# Dataset
+
+Dataset used:
+- AI Student Impact Dataset
+
+Main topics inside the dataset:
+- Student GPA
+- AI Usage Habits
+- Prompt Engineering Skill
+- Burnout Risk
+- Study Hours
+- Institutional AI Policy
+
+---
+
+# ETL Workflow
+
+## 1. Extract
+
+Raw CSV dataset is loaded using Pandas.
+
+```python
+df_raw = pd.read_csv('ai_student_impact_dataset (1).csv')
+````
+
+---
+
+## 2. Transform
+
+Data cleaning process:
+
+* Remove duplicate data
+* Remove missing values
+
+```python
+df_cleaned = df_raw.drop_duplicates().dropna()
+```
+
+---
+
+## 3. Data Modeling
+
+The dataset is transformed into a Star Schema model consisting of:
+
+### Dimension Tables
+
+* dim_student
+* dim_ai_profile
+* dim_policy
+* dim_risk
+
+### Fact Table
+
+* fact_student_ai_impact
+
+---
+
+# ERD (Entity Relationship Diagram)
+```md
+![ERD](images/ai_student_impact_erd.drawio.png)
+```
+
+Recommended folder structure:
+
 ```text
-├── .env                  # Kredensial Database (Disembunyikan)
-├── .gitignore            # Daftar file yang diabaikan oleh Git
-├── README.md             # Dokumentasi Proyek
-├── pipeline_ai.ipynb     # Script ETL Dataset AI Student
-├── pipeline_edu.ipynb    # Script ETL Dataset Global Education
-├── Global_Education.csv  # Dataset Mentah Global Education
-└── ai_student_impact.csv # Dataset Mentah AI Student Impact
+project/
+│
+├── images/
+│   └── erd.png
+│
+├── notebook/
+│   └── etl_pipeline.ipynb
+│
+├── .env
+├── .gitignore
+├── requirements.txt
+└── README.md
+```
+
+---
+
+# Star Schema Structure
+
+## Dimension: dim_student
+
+Stores student academic category information.
+
+Columns:
+
+* Student_ID
+* Major_Category
+* Year_of_Study
+
+---
+
+## Dimension: dim_ai_profile
+
+Stores AI usage behavior information.
+
+Columns:
+
+* ai_profile_id
+* Primary_Use_Case
+* Prompt_Engineering_Skill
+* Paid_Subscription
+
+---
+
+## Dimension: dim_policy
+
+Stores institutional AI policy information.
+
+Columns:
+
+* policy_id
+* Institutional_Policy
+
+---
+
+## Dimension: dim_risk
+
+Stores burnout risk category.
+
+Columns:
+
+* risk_id
+* Burnout_Risk_Level
+
+---
+
+## Fact Table: fact_student_ai_impact
+
+Stores measurable metrics related to student academic performance and AI usage.
+
+Columns:
+
+* fact_id
+* Student_ID
+* ai_profile_id
+* policy_id
+* risk_id
+* Pre_Semester_GPA
+* Post_Semester_GPA
+* Weekly_GenAI_Hours
+* Traditional_Study_Hours
+* Tool_Diversity
+* Perceived_AI_Dependency
+* Anxiety_Level_During_Exams
+* Skill_Retention_Score
+
+---
+
+# Load Process
+
+The transformed data is loaded into Supabase PostgreSQL using SQLAlchemy.
+
+```python
+engine = create_engine(DATABASE_URL)
+
+dim_student.to_sql(
+    'dim_student',
+    con=engine,
+    if_exists='replace',
+    index=False
+)
+```
+
+---
+
+# Environment Variables
+
+Store database credentials securely using `.env`.
+
+Example:
+
+```env
+DATABASE_URL=postgresql+psycopg2://USERNAME:PASSWORD@HOST:6543/postgres
+```
+
+---
+
+# Installation
+
+Clone repository:
+
+```bash
+git clone https://github.com/your-username/AI_Student_Impact_DataPipeline.git
+```
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Run the notebook or ETL script.
+
+---
+
+# Future Improvements
+
+* Add Airflow orchestration
+* Add dbt transformation layer
+* Create Power BI dashboard
+* Add automated data validation
+* Deploy scheduled ETL pipeline
+
+---
+
+# Author
+
+Nugraha Adiputra
