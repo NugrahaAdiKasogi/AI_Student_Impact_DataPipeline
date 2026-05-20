@@ -210,6 +210,29 @@ DATABASE_URL=postgresql+psycopg2://USERNAME:PASSWORD@HOST:6543/postgres
 
 ---
 
+# Post-Load Data Integrity (DBA Step)
+
+Because using the `if_exists='replace'` parameter in Pandas automatically overwrites the tables and removes their built-in constraints, the next crucial step is to re-establish the **Primary Key (PK)** and **Foreign Key (FK)** architecture directly within Supabase using `ALTER TABLE` SQL commands. This ensures that the *Star Schema* relationships remain robust and data integrity is strictly maintained.
+
+```sql
+-- Re-establish Primary Keys
+ALTER TABLE dim_student ADD PRIMARY KEY (student_id);
+ALTER TABLE dim_ai_profile ADD PRIMARY KEY (ai_profile_id);
+ALTER TABLE dim_policy ADD PRIMARY KEY (policy_id);
+ALTER TABLE dim_risk ADD PRIMARY KEY (risk_id);
+ALTER TABLE fact_student_ai_impact ADD PRIMARY KEY (fact_id);
+
+-- Re-establish Foreign Keys to maintain Star Schema integrity
+ALTER TABLE fact_student_ai_impact 
+    ADD CONSTRAINT fk_student FOREIGN KEY (student_id) REFERENCES dim_student(student_id),
+    ADD CONSTRAINT fk_ai_profile FOREIGN KEY (ai_profile_id) REFERENCES dim_ai_profile(ai_profile_id),
+    ADD CONSTRAINT fk_policy FOREIGN KEY (policy_id) REFERENCES dim_policy(policy_id),
+    ADD CONSTRAINT fk_risk FOREIGN KEY (risk_id) REFERENCES dim_risk(risk_id);
+```
+
+
+---
+
 # Installation
 
 Clone repository:
